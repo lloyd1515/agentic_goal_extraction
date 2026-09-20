@@ -1,0 +1,288 @@
+import Foundation
+
+// MARK: - Block ID
+
+typealias BlockID = UUID
+
+// MARK: - List Items
+
+struct BlockListItem: Identifiable, Equatable, Codable {
+    let id: UUID
+    var text: String
+    var indent: Int
+
+    init(id: UUID = UUID(), text: String = "", indent: Int = 0) {
+        self.id = id
+        self.text = text
+        self.indent = indent
+    }
+}
+
+struct CheckboxItem: Identifiable, Equatable, Codable {
+    let id: UUID
+    var text: String
+    var isChecked: Bool
+    var indent: Int
+
+    init(id: UUID = UUID(), text: String = "", isChecked: Bool = false, indent: Int = 0) {
+        self.id = id
+        self.text = text
+        self.isChecked = isChecked
+        self.indent = indent
+    }
+}
+
+// MARK: - Block
+
+enum Block: Identifiable {
+    case paragraph(id: BlockID, text: String)
+    case heading(id: BlockID, level: Int, text: String)
+    case bulletList(id: BlockID, items: [BlockListItem])
+    case numberedList(id: BlockID, items: [BlockListItem])
+    case checkboxList(id: BlockID, items: [CheckboxItem])
+    case blockQuote(id: BlockID, text: String)
+    case codeBlock(id: BlockID, language: String, code: String)
+    case table(id: BlockID, data: TableBlockData)
+    case divider(id: BlockID)
+    /// A Mermaid diagram, stored as its source so it stays durable in markdown.
+    case mermaid(id: BlockID, source: String)
+    /// A display-math block, stored as LaTeX between `$$` fences.
+    case math(id: BlockID, latex: String)
+    /// A GitHub-style alert: `> [!NOTE] optional title` followed by quoted body lines.
+    ///
+    /// `title` is the optional text after the marker, empty when there is none — the
+    /// distinction is kept rather than defaulted so serialization can reproduce the original
+    /// markdown exactly either way.
+    case callout(id: BlockID, kind: CalloutKind, title: String, body: String)
+
+    var id: BlockID {
+        switch self {
+        case let .paragraph(id, _),
+             let .heading(id, _, _),
+             let .bulletList(id, _),
+             let .numberedList(id, _),
+             let .checkboxList(id, _),
+             let .blockQuote(id, _),
+             let .codeBlock(id, _, _),
+             let .table(id, _),
+             let .divider(id),
+             let .mermaid(id, _),
+             let .math(id, _),
+             let .callout(id, _, _, _):
+            id
+        }
+    }
+
+    /// Returns the plain text content for text-based blocks, nil for non-text blocks.
+    var textContent: String? {
+        get {
+            switch self {
+            case let .paragraph(_, text),
+                 let .heading(_, _, text),
+                 let .blockQuote(_, text):
+                text
+            case let .codeBlock(_, _, code):
+                code
+            case let .callout(_, _, _, body):
+                body
+            default:
+                nil
+            }
+        }
+        set {
+            guard let newValue else { return }
+            switch self {
+            case let .paragraph(id, _):
+                self = .paragraph(id: id, text: newValue)
+            case let .heading(id, level, _):
+                self = .heading(id: id, level: level, text: newValue)
+            case let .blockQuote(id, _):
+                self = .blockQuote(id: id, text: newValue)
+            case let .codeBlock(id, language, _):
+                self = .codeBlock(id: id, language: language, code: newValue)
+            case let .callout(id, kind, title, _):
+                self = .callout(id: id, kind: kind, title: title, body: newValue)
+            default:
+                break
+            }
+        }
+    }
+
+    /// Whether this block type contains editable text directly (not via list items).
+    ///
+    /// A callout counts: its body is edited in place like a quote's. That also puts it in the
+    /// "Turn into" menu, which is what lets a callout be demoted back to a plain quote.
+    var isTextBlock: Bool {
+        switch self {
+        case .paragraph, .heading, .blockQuote, .codeBlock, .callout:
+            true
+        default:
+            false
+        }
+    }
+
+    /// Whether this block is a list (bullet, numbered, or checkbox).
+    var isListBlock: Bool {
+        switch self {
+        case .bulletList, .numberedList, .checkboxList:
+            true
+        default:
+            false
+        }
+    }
+
+    /// All searchable text strings in this block (paragraph text, list item texts, code, etc.).
+    /// Used for suggestion mapping and scroll-to-text matching.
+    var searchableTexts: [String] {
+        switch self {
+        case let .paragraph(_, text), let .heading(_, _, text), let .blockQuote(_, text):
+            text.isEmpty ? [] : [text]
+        case let .codeBlock(_, _, code):
+            code.isEmpty ? [] : [code]
+        case let .bulletList(_, items), let .numberedList(_, items):
+            items.map(\.text).filter { !$0.isEmpty }
+        case let .checkboxList(_, items):
+            items.map(\.text).filter { !$0.isEmpty }
+        case let .mermaid(_, source):
+            source.isEmpty ? [] : [source]
+        case let .math(_, latex):
+            latex.isEmpty ? [] : [latex]
+        case let .callout(_, _, title, body):
+            [title, body].filter { !$0.isEmpty }
+        default:
+            []
+        }
+    }
+
+    /// Whether this block is empty (no meaningful content).
+    var isEmpty: Bool {
+        switch self {
+        case let .paragraph(_, text):
+            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .heading(_, _, text):
+            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .bulletList(_, items):
+            items.allSatisfy { $0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        case let .numberedList(_, items):
+            items.allSatisfy { $0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        case let .checkboxList(_, items):
+            items.allSatisfy { $0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        case let .blockQuote(_, text):
+            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .codeBlock(_, _, code):
+            code.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .table(_, data):
+            data.rows.allSatisfy { $0.allSatisfy(\.isEmpty) }
+        case .divider:
+            false
+        case let .mermaid(_, source):
+            source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .math(_, latex):
+            latex.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case let .callout(_, _, title, body):
+            title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                && body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+}
+
+// MARK: - Equatable
+
+extension Block: Equatable {
+    static func == (lhs: Block, rhs: Block) -> Bool {
+        switch (lhs, rhs) {
+        case let (.paragraph(lid, lt), .paragraph(rid, rt)):
+            lid == rid && lt == rt
+        case let (.heading(lid, ll, lt), .heading(rid, rl, rt)):
+            lid == rid && ll == rl && lt == rt
+        case let (.bulletList(lid, li), .bulletList(rid, ri)):
+            lid == rid && li == ri
+        case let (.numberedList(lid, li), .numberedList(rid, ri)):
+            lid == rid && li == ri
+        case let (.checkboxList(lid, li), .checkboxList(rid, ri)):
+            lid == rid && li == ri
+        case let (.blockQuote(lid, lt), .blockQuote(rid, rt)):
+            lid == rid && lt == rt
+        case let (.codeBlock(lid, ll, lc), .codeBlock(rid, rl, rc)):
+            lid == rid && ll == rl && lc == rc
+        case let (.table(lid, ld), .table(rid, rd)):
+            lid == rid && ld === rd && ld.version == rd.version
+        case let (.divider(lid), .divider(rid)):
+            lid == rid
+        case let (.mermaid(lid, ls), .mermaid(rid, rs)):
+            lid == rid && ls == rs
+        case let (.math(lid, ll), .math(rid, rl)):
+            lid == rid && ll == rl
+        case let (.callout(lid, lk, lt, lb), .callout(rid, rk, rt, rb)):
+            lid == rid && lk == rk && lt == rt && lb == rb
+        default:
+            false
+        }
+    }
+}
+
+// MARK: - Factory Methods
+
+extension Block {
+    static func emptyParagraph() -> Block {
+        .paragraph(id: UUID(), text: "")
+    }
+
+    static func emptyHeading(level: Int = 1) -> Block {
+        .heading(id: UUID(), level: level, text: "")
+    }
+
+    static func emptyBulletList() -> Block {
+        .bulletList(id: UUID(), items: [BlockListItem()])
+    }
+
+    static func emptyNumberedList() -> Block {
+        .numberedList(id: UUID(), items: [BlockListItem()])
+    }
+
+    static func emptyCheckboxList() -> Block {
+        .checkboxList(id: UUID(), items: [CheckboxItem()])
+    }
+
+    static func emptyBlockQuote() -> Block {
+        .blockQuote(id: UUID(), text: "")
+    }
+
+    static func emptyCodeBlock(language: String = "") -> Block {
+        .codeBlock(id: UUID(), language: language, code: "")
+    }
+
+    static func emptyTable(columns: Int = 3, rows: Int = 2, availableWidth: CGFloat? = nil) -> Block {
+        .table(id: UUID(), data: TableBlockData(columns: columns, rowCount: rows, availableWidth: availableWidth))
+    }
+
+    static func newDivider() -> Block {
+        .divider(id: UUID())
+    }
+
+    static func emptyMermaid() -> Block {
+        .mermaid(id: UUID(), source: "flowchart LR\n  A --> B")
+    }
+
+    static func emptyMath() -> Block {
+        .math(id: UUID(), latex: "")
+    }
+
+    /// A new callout with no title, so the row shows the kind's default heading and the
+    /// serialized markdown is the bare `> [!NOTE]` form.
+    static func emptyCallout(kind: CalloutKind = .note) -> Block {
+        .callout(id: UUID(), kind: kind, title: "", body: "")
+    }
+
+    /// The first list item ID for list-type blocks, nil for others.
+    var firstListItemID: UUID? {
+        switch self {
+        case let .bulletList(_, items), let .numberedList(_, items):
+            items.first?.id
+        case let .checkboxList(_, items):
+            items.first?.id
+        default:
+            nil
+        }
+    }
+}

@@ -1,0 +1,533 @@
+import Foundation
+
+enum AppConstants {
+    static let bundleID = "com.bitwize.logue"
+    static let appName = "Logue"
+
+    enum UserDefaultsKeys {
+        static let activeModelID = "activeModelID"
+        static let hasCompletedOnboarding = "hasCompletedOnboarding"
+
+        /// Set once `SandboxContainerMigrator` has moved data out of the legacy
+        /// (pre-1.0.1, sandboxed) container. See that type for why the sandbox went away.
+        static let sandboxContainerMigrationCompleted = "sandboxContainerMigrationCompleted"
+
+        static let writingGoalMode = "writingGoalMode"
+        static let actionModelMap = "ActionModelMap"
+        static let documentViewMode = "documentViewMode"
+        static let meetingViewMode = "meetingViewMode"
+        static let trashViewMode = "trashViewMode"
+
+        static let shortcutCommandCenterKeyCode = "shortcutCommandCenterKeyCode"
+        static let shortcutCommandCenterModifiers = "shortcutCommandCenterModifiers"
+
+        static let hasClearedSeedData = "hasClearedSeedData"
+
+        /// Newest release whose notes the user has been shown, as a marketing version
+        /// string ("1.1.0"). Absent means either a fresh install or an install predating
+        /// this feature — `WhatsNewGate` tells those apart by whether onboarding is done,
+        /// and survives "Reset Application Data" so a reset does not replay the notes.
+        static let lastSeenWhatsNewVersion = "lastSeenWhatsNewVersion"
+
+        static let documentSortOrder = "documentSortOrder"
+        static let meetingSortOrder = "meetingSortOrder"
+        static let actionItemSortOrder = "actionItemSortOrder"
+        static let actionItemInboxMode = "actionItemInboxMode"
+        /// How the Tasks list is sorted, remembered between launches.
+        static let taskSortOrder = "taskSortOrder"
+        /// Which filter the Tasks list opens on.
+        static let taskFilterMode = "taskFilterMode"
+        static let autoSortCheckedItems = "autoSortCheckedItems"
+        /// Editor zoom multiplier applied on top of the base editor font size.
+        static let editorZoomScale = "editorZoomScale"
+        /// Width mode newly created documents start at. Per-document values still win.
+        static let defaultDocumentWidthMode = "defaultDocumentWidthMode"
+        /// Which panes the main window shows — see `EditorLayoutMode`.
+        static let editorLayoutMode = "editorLayoutMode"
+        /// Language last chosen in a code block, used as the default for the next one.
+        static let lastCodeBlockLanguage = "lastCodeBlockLanguage"
+        /// How documents are stored: `encrypted` (default) or `markdown`.
+        static let documentStorageMode = "documentStorageMode"
+        static let unwritableDocuments = "unwritableDocuments"
+
+        /// When the browser-extension callout was first shown, so its week can expire.
+        static let browserExtensionPromoFirstShown = "browserExtensionPromoFirstShown"
+        /// Whether the user closed the browser-extension callout.
+        static let browserExtensionPromoDismissed = "browserExtensionPromoDismissed"
+
+        /// On by default as of 1.1.0 — see `BrowserBridgeSettings` for the trade.
+        static let browserBridgeEnabled = "browserBridgeEnabled"
+        static let groupByDate = "groupByDate"
+        static let customAPIModels = "CustomAPIModels"
+        static let autoSaveSummaryToDocument = "autoSaveSummaryToDocument"
+        static let sidebarSpaceSortOrder = "sidebarSpaceSortOrder"
+        /// Master toggle for the agent's web-search tools. Default OFF for privacy.
+        static let webSearchEnabled = "agent.webSearchEnabled"
+        /// Per-send "Search this turn" override toggled from the input bar's
+        /// `+` menu. Mirrors the in-memory `oneShotIncludeWebTools` state, but
+        /// gives the AgentCoordinator a SwiftUI-binding-independent way to
+        /// observe the user's intent (the Menu close pipeline on macOS can
+        /// race with `@Binding` updates). Reset to `false` after every send.
+        static let oneShotWebSearch = "agent.oneShotWebSearch"
+        /// Same idea for the per-send Deep Research toggle.
+        static let oneShotDeepResearch = "agent.oneShotDeepResearch"
+        /// The island's own one-shot modes.
+        ///
+        /// Deliberately *not* the two keys above. The island clears its flags after every
+        /// send, so sharing the main window's keys meant a quick question here disarmed a
+        /// chip the user had armed over there and left on an unsent prompt — it then ran
+        /// without web tools and never said so. Separate keys keep the `@AppStorage`
+        /// binding a SwiftUI `Menu` needs without sharing the value.
+        static let islandOneShotWebSearch = "island.oneShotWebSearch"
+        static let islandOneShotDeepResearch = "island.oneShotDeepResearch"
+        /// Optional override for the agent system prompt. Empty string = use the
+        /// built-in default in `PromptRegistry.Agent`.
+        static let agentSystemPromptOverride = "agent.systemPromptOverride"
+        /// Comma-separated list of tool names the user has disabled in Settings.
+        /// The registry strips these on every rebuild.
+        static let disabledAgentTools = "agent.disabledTools"
+        /// The marker of the tasks folder this app last used. Remembered so a folder
+        /// minted while the real one was missing can be told from a copy of it.
+        static let lastTaskFolderMarker = "lastTaskFolderMarker"
+        /// Whether the agent's `<thinking>` reasoning blocks are shown in the
+        /// rendered response. Default OFF — most users don't want them.
+        static let showReasoningBlocks = "agent.showReasoningBlocks"
+        /// Tavily API key (stored via Keychain, but we mirror "is set" here so
+        /// Settings can show the input as filled without re-fetching the secret).
+        static let tavilyKeyPresent = "agent.tavilyKeyPresent"
+        /// User-overridden inference params. -1 = use model defaults.
+        static let inferenceTemperature = "agent.inferenceTemperature"
+        static let inferenceTopP = "agent.inferenceTopP"
+        static let inferenceMaxTokens = "agent.inferenceMaxTokens"
+        /// Memory recall thresholds.
+        static let memoryRecallThreshold = "agent.memoryRecallThreshold"
+        static let memoryTopK = "agent.memoryTopK"
+        /// Preferred TTS voice identifier (`AVSpeechSynthesisVoice.identifier`).
+        static let ttsVoiceIdentifier = "agent.ttsVoiceIdentifier"
+    }
+
+    enum ModelStorage {
+        /// Root directory where downloaded MLX models are stored.
+        /// Matches LocalLLMClient's FileDownloader.defaultRootDestination.
+        static var rootDirectory: URL {
+            URL.applicationSupportDirectory
+                .appending(path: "LocalLLM", directoryHint: .isDirectory)
+        }
+    }
+
+    // A9/A10/A-N10/A-N11: Centralized LLM defaults
+    enum LLMDefaults {
+        static let maxRetryAttempts = 3
+        static let retryDelay: Duration = .seconds(1)
+        static let contextWindowSize = 800
+        static let titlePromptContextSize = 800
+        static let summaryFallbackContextSize = 2000
+        static let spaceSuggestionContextSize = 600
+        static let maxTitleLength = 100
+        // A-N10: Minimum content thresholds
+        static let minCharsForAI = 20
+        static let minDocCharsForAutoTitle = 50
+        // A-N11: Additional context window sizes
+        static let piiContextSize = 6000
+        static let piiLLMContextSize = 3000
+        static let spaceContextSize = 4000
+        static let digestSummaryContextSize = 300
+
+        /// Reserved tokens for context window calculations (~4 chars/token heuristic).
+        /// summaryReservedTokens: 2048 output + 1500 system prompt/speaker context = 3548
+        static let summaryReservedTokens = 3548
+        /// chatReservedTokens: 1024 output + 500 system prompt = 1524
+        static let chatReservedTokens = 1524
+    }
+
+    enum Audio {
+        /// Buffer size for AVAudioEngine input tap
+        static let tapBufferSize: UInt32 = 4096
+        /// Interval in nanoseconds for polling aggregate device readiness
+        static let devicePollIntervalNanos: UInt64 = 100_000_000 // 100ms
+        /// Retry delay in nanoseconds for AudioDeviceStart
+        static let deviceStartRetryDelayNanos: UInt64 = 200_000_000 // 200ms
+        /// Maximum attempts to poll aggregate device readiness
+        static let maxDevicePollAttempts = 20
+        /// Maximum attempts to start audio device
+        static let maxDeviceStartRetries = 5
+        /// Diarization model initialization timeout in seconds (long to allow first-time HuggingFace download)
+        static let diarizationInitTimeoutSeconds: TimeInterval = 600
+    }
+
+    enum Diarization {
+        /// Minimum samples between Sortformer process() calls (at 16kHz)
+        static let processIntervalSamples = 32000 // 2.0s
+        /// Speaker label matching tolerance in seconds
+        static let speakerLabelTolerance: Double = 3.5
+        /// Clustering threshold for batch diarizer
+        static let clusteringThreshold: Float = 0.65
+        /// Sortformer onset threshold (lower catches quieter speakers)
+        static let onsetThreshold: Float = 0.4
+        /// Sortformer offset threshold
+        static let offsetThreshold: Float = 0.4
+        /// Post-recording pipeline timeout in seconds
+        static let postRecordingTimeoutSeconds: TimeInterval = 180
+        /// How much of a recording the post-recording batch pass (Parakeet ASR + Sortformer) can be
+        /// handed in one go, expressed as memory rather than as minutes: the session's audio is held
+        /// as 16 kHz mono Float32 (~230 MB per hour) and given to the models whole, so what bounds
+        /// it is what the machine can hold. A fixed number of minutes would be wasteful on a large
+        /// Mac and reckless on a small one. `AudioTimelineMixer.capacity(forPhysicalMemory:)` reads
+        /// these; audio past the limit is dropped and that stretch keeps its live transcript rather
+        /// than losing it — see `TranscriptReplacement`.
+        static let audioBufferMemoryDivisor: UInt64 = 16 // a sixteenth of installed memory
+        /// …and no more than a quarter of what is actually free, which is the tighter bound on a
+        /// machine that has been running a while.
+        static let audioBufferAvailableDivisor: UInt64 = 4
+        static let audioBufferMinBytes: UInt64 = 256 * 1024 * 1024 // ~1.2 hours
+        static let audioBufferMaxBytes: UInt64 = 1024 * 1024 * 1024 // ~4.6 hours
+        /// Chunk size for the long-recording pass, which streams the persisted file past the
+        /// in-memory limit instead of stopping there. Big enough that per-chunk overhead is
+        /// irrelevant, small enough that a chunk is a few megabytes.
+        static let longRecordingChunkSeconds: Double = 30
+        /// How far short of the session the saved audio may fall before the long-recording pass
+        /// stops speaking for the part it does not hold. Covers the ordinary slack between capture
+        /// stopping and the clock stopping; a real shortfall is far larger than this.
+        static let recordingCoverageTolerance: TimeInterval = 5
+        /// Dedup tolerance for overlapping speaker segments in seconds
+        static let segmentDedupTolerance: Double = 0.15
+        /// Silero VAD model probability threshold — lowered from default 0.85 to catch quiet/distant speakers
+        static let vadThreshold: Float = 0.5
+        /// VAD: minimum speech duration kept (filters keyboard/breath noise)
+        static let vadMinSpeechDuration: TimeInterval = 0.25
+        /// VAD: silence needed to close a speech segment (prevents mid-sentence cuts on thinking pauses)
+        static let vadMinSilenceDuration: TimeInterval = 1.5
+        /// VAD: padding added before/after each speech region (covers cut-off word starts/ends)
+        static let vadSpeechPadding: TimeInterval = 0.25
+        /// VAD: hysteresis offset — once speech starts, stays triggered until prob drops this far below threshold
+        static let vadNegativeThresholdOffset: Float = 0.25
+
+        // MARK: Timeline normalization
+
+        /// Sortformer segments shorter than this are treated as fragments and discarded
+        static let minSpeakerSegmentDuration: TimeInterval = 0.7
+        /// Consecutive segments from the same speaker within this gap are merged into one
+        static let sameSpeakerMergeGap: TimeInterval = 0.25
+        /// An A-B-A speaker alternation completing within this window is collapsed to the dominant speaker
+        static let alternationWindowSeconds: TimeInterval = 0.8
+        /// Largest silence left between normalized speaker segments before it is closed up
+        static let timelineMaxGap: TimeInterval = 0.5
+        /// Widest silence worth closing at all. Beyond this the pause is real conversation rhythm,
+        /// not model jitter, and pulling the next speaker back over it would hand them time they
+        /// were audibly not speaking for — which alignment would then read as confident overlap for
+        /// anything transcribed in that window. Long silences are left as silence.
+        static let maxClosableGap: TimeInterval = 2.0
+
+        // MARK: Transcript alignment
+
+        /// Transcript segments longer than this are chunked for weighted majority voting
+        static let chunkThresholdSeconds: TimeInterval = 2.0
+        /// Width of each voting chunk when a long transcript segment is subdivided
+        static let chunkDurationSeconds: TimeInterval = 1.5
+        /// A runner-up speaker holding at least this fraction of the winner's overlap makes the
+        /// segment too close to call, so the previous segment's speaker is preferred instead
+        static let ambiguityOverlapRatio: Double = 0.70
+        /// Nearest-speaker fallback window used only when nothing overlaps the segment at all.
+        /// Deliberately far tighter than `speakerLabelTolerance`, which governs text gathering.
+        static let labelFallbackTolerance: TimeInterval = 0.5
+        /// Minimum overlap that makes a second speaker worth splitting a transcript segment for
+        static let minSplitOverlap: TimeInterval = 0.15
+        /// Split parts shorter than this are not worth creating
+        static let minSplitPartDuration: TimeInterval = 0.4
+        /// Upper bound on the parts a single transcript segment may be split into
+        static let maxSplitParts = 5
+        /// A single-segment speaker island longer than this is a real turn, not flapping,
+        /// so smoothing leaves it alone
+        static let maxSmoothedIslandDuration: TimeInterval = 0.8
+    }
+
+    // A-N13: Default title strings
+    static let defaultDocumentTitle = "Untitled Document"
+    static let defaultMeetingTitle = "Untitled Meeting"
+
+    // MARK: - Centralized Delays
+
+    /// The loopback bridge the Logue browser extension talks to.
+    enum BrowserBridge {
+        /// Ports tried in order. More than one because the first is a guess about what else is
+        /// on the machine — the extension scans the same list, so the two stay in step.
+        static let candidatePorts: [UInt16] = [52452, 52453, 52454]
+
+        /// Open connections allowed at once. A browser uses a handful; anything beyond this is a
+        /// runaway rather than a user.
+        static let maxConcurrentConnections = 16
+
+        /// Output cap for a chat answer. The default of 512 truncates conversational replies
+        /// mid-sentence.
+        static let chatMaxTokens = 2048
+
+        /// Room left for the system turn and the chat template's own scaffolding when working
+        /// out how much of a caller's conversation fits the context window.
+        static let systemPromptReservedTokens = 512
+    }
+
+    enum Delays {
+        /// Coalesces a burst of filesystem events from another editor saving, so one
+        /// external save triggers one folder scan rather than several.
+        ///
+        /// A `TimeInterval` rather than a `Duration` because its only caller is
+        /// `DispatchQueue.asyncAfter`, sitting between two C APIs — `FSEventStream` and GCD —
+        /// and neither speaks `Duration`.
+        static let folderScanDebounceSeconds: TimeInterval = 0.4
+
+        /// How long a file must have been untouched before it is adopted as a new document.
+        ///
+        /// A file mid-write looks exactly like a file with no identifier, and adopting one wrote our
+        /// frontmatter over content the user was still saving. Comfortably longer than the scan
+        /// debounce, because the point is to outlast a writer that is not atomic.
+        static let adoptionSettleSeconds: TimeInterval = 2.0
+
+        /// How long a pane waits before admitting it is still loading.
+        ///
+        /// Long enough that a fast load looks instant rather than showing a spinner that
+        /// flashes, short enough that a slow one does not look broken.
+        static let loadingIndicatorAppearance: Duration = .milliseconds(250)
+
+        /// How long the rescan button keeps spinning at minimum.
+        ///
+        /// A scan of a normal folder finishes in milliseconds — faster than the eye, so
+        /// without a floor the press would look like it did nothing at all.
+        static let rescanMinimumVisible: Duration = .milliseconds(700)
+
+        /// -- UI Debounce --
+        /// Search field input debounce (document list, meeting list, overview, sidebar)
+        static let searchDebounce: Duration = .milliseconds(300)
+        /// Markdown sync debounce in block editor
+        static let markdownSyncDebounce: Duration = .milliseconds(300)
+        /// Metadata save debounce for non-critical meeting changes (favorite, archive, rename)
+        static let metadataSaveDebounce: Duration = .milliseconds(300)
+
+        /// -- Persistence Debounce --
+        /// Debounced disk save interval during live recording
+        static let liveRecordingSaveDebounce: Duration = .seconds(3)
+        /// Debounce before generating auto-title for meetings
+        static let meetingAutoTitleDebounce: Duration = .seconds(2)
+        /// Debounce before generating auto-title for documents
+        static let documentAutoTitleDebounce: Duration = .seconds(3)
+        /// Debounce before running spell check after cursor movement
+        static let spellCheckDebounce: Duration = .seconds(1)
+
+        /// -- UI Focus --
+        /// Brief yield to let UI update before setting focus on a text field
+        static let focusActivation: Duration = .milliseconds(100)
+
+        /// -- UI Feedback --
+        /// Duration to show transient "Copied" / "Inserted" / clipboard feedback
+        static let clipboardFeedback: Duration = .milliseconds(1500)
+        /// Duration to show transient toast or status messages (e.g. export, save, command center)
+        static let toastDismiss: Duration = .seconds(2)
+        /// Duration to show bookmark confirmation feedback
+        static let bookmarkConfirm: Duration = .seconds(1)
+        /// Duration to show bookmark confirm during recording (slightly longer)
+        static let bookmarkConfirmLong: Duration = .seconds(1.5)
+        /// Duration to show "copied to clipboard" in Polish engine
+        static let copiedToClipboardDismiss: Duration = .seconds(1.5)
+        /// Duration to show block highlight after programmatic focus
+        static let blockHighlight: Duration = .seconds(1.5)
+        /// Cleanup delay for temporary suggestion highlight injected by scrollToBlockContaining
+        static let suggestionHighlightCleanup: Duration = .milliseconds(500)
+        /// Brief pause before auto-advancing onboarding page after model ready
+        static let onboardingAutoAdvance: Duration = .milliseconds(800)
+
+        /// How long a sidebar row keeps counting as hovered after the pointer leaves.
+        ///
+        /// Long enough that clicking the row's "⋯" button still reads as a hover by the time
+        /// the menu says it opened — the two events arrive in either order — and short enough
+        /// that the button does not linger once the pointer has genuinely moved on.
+        static let rowHoverOut: Duration = .milliseconds(150)
+
+        /// Gap between dismissing one sheet and presenting the next, used when the
+        /// feature tour follows onboarding.
+        ///
+        /// AppKit refuses a sheet while the previous one is still animating out and
+        /// fails silently, so the tour simply never appeared without this wait.
+        static let sheetHandoff: Duration = .milliseconds(600)
+
+        /// How long each frame of a What's New card's image sequence holds before the
+        /// next one. Long enough to read a screenshot, short enough that a three-step
+        /// sequence completes before the reader has finished the caption and moved on.
+        static let whatsNewSequenceStep: Duration = .seconds(2.5)
+
+        /// How long one frame of that sequence takes to fade into the next. A
+        /// `TimeInterval` rather than a `Duration` because it feeds SwiftUI's
+        /// `.easeInOut(duration:)`, which does not take one.
+        static let whatsNewSequenceCrossfade: TimeInterval = 0.35
+
+        /// -- Navigation --
+        /// Brief yield to let sidebar expand before selecting a space
+        static let sidebarNavigationYield: Duration = .milliseconds(150)
+
+        /// -- Engine / System --
+        /// Yield to allow Metal resource deallocation when switching LLM models
+        static let metalDeallocationYield: Duration = .milliseconds(200)
+        /// Timeout for LLM session prewarm
+        static let llmPrewarmTimeout: Duration = .seconds(60)
+        /// Timeout for waiting on previous post-recording task before new session
+        static let postRecordingWaitTimeout: Duration = .seconds(5)
+        /// Timeout for SpeechTranscriberEngine recognizer finalization
+        static let recognizerFinalizationTimeout: Duration = .seconds(10)
+
+        /// -- Accessibility / Cross-App --
+        /// Brief yield before posting synthetic keyboard events (Cmd+V paste)
+        static let accessibilityKeyEventYield: Duration = .milliseconds(100)
+        /// Delay before restoring original clipboard contents after paste
+        static let clipboardRestoreDelay: Duration = .milliseconds(500)
+        /// Brief yield before activating app (dock icon + frontmost)
+        static let appActivationYield: Duration = .milliseconds(100)
+        /// Speech synthesis polling interval to detect end of speaking
+        static let speechSynthesisPolling: Duration = .milliseconds(500)
+        /// Delay before re-focusing input field after sending chat message
+        static let chatInputRefocusInterval: TimeInterval = 0.1
+
+        /// -- Voice --
+        /// Brief pause to let voice recognition finalize before reading transcript
+        static let voiceRecognitionFinalize: Duration = .milliseconds(400)
+
+        /// -- Diarization --
+        /// Polling interval while waiting for Sortformer processing lock to release
+        static let sortformerPollInterval: Duration = .milliseconds(10)
+        /// How long stop-recording waits for diarization models to finish initializing before
+        /// giving up and letting post-recording AI proceed without Sortformer
+        static let diarizationInitStopWait: Duration = .seconds(10)
+
+        /// -- Audio Device Retry (exponential backoff) --
+        /// Initial retry delay for AudioDeviceStart (doubles each attempt)
+        static let audioDeviceStartInitialDelayNanos: UInt64 = 50_000_000 // 50ms
+        /// Maximum retry delay cap for AudioDeviceStart
+        static let audioDeviceStartMaxDelayNanos: UInt64 = 400_000_000 // 400ms
+
+        // -- DispatchQueue / GCD Delays (TimeInterval) --
+        // These use `TimeInterval` (seconds as Double) for GCD compatibility:
+        // `DispatchQueue.main.asyncAfter(deadline: .now() + delay)`.
+        // All `Duration` constants above are for `Task.sleep(for:)` in async contexts.
+
+        /// Delay for dock visibility update after window close
+        static let dockVisibilityUpdateInterval: TimeInterval = 0.3
+        /// Delay before terminating app after relaunch to let new instance start
+        static let relaunchTerminationInterval: TimeInterval = 0.5
+        /// Brief delay before hiding selection toolbar (checks if selection cleared)
+        static let selectionToolbarHideInterval: TimeInterval = 0.08
+
+        // -- Automatic capture --
+
+        /// How long something must keep playing before it arms the system-audio tap.
+        ///
+        /// A notification chime and a video call both make the default output device report that
+        /// it is running; only one of them is a meeting. A second of continuous playback separates
+        /// them without making the tap noticeably late to a call that has already started.
+        static let systemAudioArmingDebounce: TimeInterval = 1.0
+
+        /// How often the arming monitor re-reads playback state.
+        ///
+        /// A backstop for the Core Audio property listener, which only fires on transitions and so
+        /// says nothing about audio that was already playing when recording started.
+        static let systemAudioArmingPoll: Duration = .milliseconds(500)
+
+        /// How long recovery waits for the meeting library to load before giving up.
+        ///
+        /// Reading an unloaded library makes every meeting look deleted, and recovery deletes the
+        /// recordings of meetings that no longer exist — so this must resolve before it runs.
+        static let meetingStoreLoadTimeout: Duration = .seconds(30)
+
+        /// How often that wait re-checks.
+        static let meetingStoreLoadPoll: Duration = .milliseconds(100)
+
+        /// How often a recording in progress writes down where it has got to.
+        ///
+        /// What a crash costs is bounded by this. The write is a small JSON file, so the interval is
+        /// set by how much of a meeting it is acceptable to lose rather than by what it costs.
+        static let recordingCheckpointInterval: Duration = .seconds(30)
+
+        /// How often a missing capture device is re-checked while its grace period runs.
+        ///
+        /// The device-list listener fires when a device appears or disappears. Nothing fires to say
+        /// one has *stayed* missing, which is the thing the grace period is waiting to find out.
+        static let deviceLossPoll: Duration = .milliseconds(500)
+    }
+
+    enum Transcription {
+        /// How much audio ahead of detected speech is kept and released when the gate opens.
+        ///
+        /// Voice activity is recognised slightly after a word has begun, so releasing only from the
+        /// moment of recognition clips the first consonant off every utterance.
+        static let gatePreRoll: TimeInterval = 0.3
+
+        /// How long the gate stays open past the end of speech, so trailing consonants survive.
+        static let gateTail: TimeInterval = 0.4
+    }
+
+    enum Support {
+        static let email = "support@bitwize.ai"
+    }
+
+    // MARK: - Editor
+
+    enum Editor {
+        /// Comfortable measure for prose — roughly 75 characters at the default size.
+        /// The column never goes below this until the pane itself is narrower.
+        static let normalBaseContentWidth: CGFloat = 720
+        /// Wide measure for tables, diagrams, and generated documents.
+        static let wideBaseContentWidth: CGFloat = 1100
+
+        /// Share of the editor pane each mode grows to occupy once the pane is wide
+        /// enough that the base measure would leave the window looking empty.
+        static let normalWidthFraction: CGFloat = 0.70
+        static let wideWidthFraction: CGFloat = 0.90
+
+        /// Ceilings on the grown column. Past these a line is too long to read
+        /// comfortably however much display there is.
+        static let normalMaxContentWidth: CGFloat = 900
+        static let wideMaxContentWidth: CGFloat = 1400
+
+        /// The narrowest a content pane may be squeezed to by widening the inspector
+        /// beside it — the normal reading measure. Past this the editor is giving up
+        /// the column it is designed around, and wide content starts scrolling
+        /// sideways instead of fitting.
+        static let minContentPaneWidth: CGFloat = normalBaseContentWidth
+
+        /// Editor text-zoom bounds. 1.0 is the document's natural size.
+        static let minZoom: CGFloat = 0.5
+        static let maxZoom: CGFloat = 3.0
+        static let zoomStep: CGFloat = 0.1
+        static let defaultZoom: CGFloat = 1.0
+    }
+
+    // MARK: - Agent Defaults
+
+    // MARK: - Web Search
+
+    enum WebSearch {
+        /// User-Agent sent to DuckDuckGo's HTML endpoint. Matches a common Mac
+        /// browser shape; some endpoints reject unknown clients.
+        static let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+        /// Hard ceiling on results returned per query (keeps tool output tight).
+        static let maxResults = 10
+        /// Maximum query length before truncation. Long queries are usually noise.
+        static let maxQueryChars = 200
+        /// Maximum characters returned by `fetch_web_page`. Caps tool output well
+        /// below the agent result truncation threshold.
+        static let maxFetchChars = 16000
+    }
+
+    enum AgentDefaults {
+        /// Maximum tool-call rounds before the agent loop terminates with a fallback response.
+        static let maxToolRounds = 5
+        /// Maximum retries per individual tool before skipping it.
+        static let maxToolRetries = 3
+        /// Maximum characters for a single tool result before truncation.
+        static let toolResultMaxChars = 4000
+        /// Reserved tokens for agent system prompt + output overhead.
+        static let reservedTokens = 1524
+        /// Max output tokens for agent responses (higher than default 512 for detailed answers).
+        static let maxResponseTokens = 2048
+        /// Per-tool execution timeout in seconds. Prevents indefinite hangs from stuck tools.
+        static let toolTimeoutSeconds: UInt64 = 30
+        /// How long the approval gate waits for user input before auto-rejecting (in seconds).
+        static let approvalTimeoutSeconds: Int = 300
+    }
+}

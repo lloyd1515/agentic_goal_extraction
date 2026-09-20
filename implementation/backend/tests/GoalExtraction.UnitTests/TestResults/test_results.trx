@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="65a94e8f-f6c4-4660-8381-214d58e4f02f" name="@fedora 2026-09-19 17:40:23" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-19T17:40:23.8832192+03:00" queuing="2026-09-19T17:40:23.8832204+03:00" start="2026-09-19T17:40:23.2592508+03:00" finish="2026-09-19T17:40:23.8892863+03:00" />
+  <TestSettings name="default" id="755a3f59-6611-4a35-a503-a7bdbd985a01">
+    <Deployment runDeploymentRoot="_fedora_2026-09-19_17_40_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="926fbcbf-a326-48a4-a309-4995c06f708a" testId="d71616d7-3920-d187-c0ed-35c90699d8b5" testName="GoalExtraction.UnitTests.ArchitectureTests.DomainProject_ShouldHaveNoExternalDependenciesOrProjectReferences" computerName="fedora" duration="00:00:00.0007431" startTime="2026-09-19T17:40:23.7964473+03:00" endTime="2026-09-19T17:40:23.7964485+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="926fbcbf-a326-48a4-a309-4995c06f708a" />
+    <UnitTestResult executionId="783c4719-c89d-4a9e-8f83-98c7491ff1c7" testId="2de9b0d9-0783-7806-0d72-cb082c4a5108" testName="GoalExtraction.UnitTests.ArchitectureTests.IGoalBatchWriteRepository_ShouldOnlyHaveBatchWriteMethods_AdheringToIsp" computerName="fedora" duration="00:00:00.0010103" startTime="2026-09-19T17:40:23.7956756+03:00" endTime="2026-09-19T17:40:23.7956767+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="783c4719-c89d-4a9e-8f83-98c7491ff1c7" />
+    <UnitTestResult executionId="f94b3d6f-ed69-45d1-b778-77eb26b7ec9e" testId="a9117d23-db00-8e55-78a3-912d7f5033b8" testName="GoalExtraction.UnitTests.ArchitectureTests.IReadOnlyGoalQueryRepository_ShouldHaveZeroMutatingMethods_AdheringToIsp" computerName="fedora" duration="00:00:00.0021608" startTime="2026-09-19T17:40:23.7943102+03:00" endTime="2026-09-19T17:40:23.7943113+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f94b3d6f-ed69-45d1-b778-77eb26b7ec9e" />
+    <UnitTestResult executionId="81c20c38-4da3-453e-ac7d-5e5fab9532c3" testId="af34ae98-c28d-45ad-b61d-175effc18e0c" testName="GoalExtraction.UnitTests.ArchitectureTests.InfrastructureProject_ShouldNotReferenceApi" computerName="fedora" duration="00:00:00.0055090" startTime="2026-09-19T17:40:23.7937450+03:00" endTime="2026-09-19T17:40:23.7937474+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81c20c38-4da3-453e-ac7d-5e5fab9532c3" />
+    <UnitTestResult executionId="e1992f02-c6ec-4fa7-91ad-22d68fc435b5" testId="c535e8d0-9d79-89cb-bfd4-a742fe10b587" testName="GoalExtraction.UnitTests.ArchitectureTests.DomainAssembly_ShouldNotReferenceApplicationInfrastructureOrApi" computerName="fedora" duration="00:00:00.0007693" startTime="2026-09-19T17:40:23.7946331+03:00" endTime="2026-09-19T17:40:23.7946343+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1992f02-c6ec-4fa7-91ad-22d68fc435b5" />
+    <UnitTestResult executionId="90861db1-2d11-4b97-8c0e-a190bb17f87e" testId="ce2a4053-3f6e-9066-3a17-3be8b03c4acc" testName="GoalExtraction.UnitTests.ArchitectureTests.ApplicationAssembly_ShouldNotReferenceInfrastructureOrApi" computerName="fedora" duration="00:00:00.0016597" startTime="2026-09-19T17:40:23.7942639+03:00" endTime="2026-09-19T17:40:23.7942662+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90861db1-2d11-4b97-8c0e-a190bb17f87e" />
+    <UnitTestResult executionId="fe2517c3-d6a5-4908-85aa-0c0746e2b7c6" testId="80d65696-8700-73e9-5680-80d9f70d2424" testName="GoalExtraction.UnitTests.SanityUnitTests.Architecture_ShouldBeConfiguredCorrectly" computerName="fedora" duration="00:00:00.0039975" startTime="2026-09-19T17:40:23.7903374+03:00" endTime="2026-09-19T17:40:23.7903683+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe2517c3-d6a5-4908-85aa-0c0746e2b7c6" />
+    <UnitTestResult executionId="81a613ed-7951-434e-b06a-0b10839266eb" testId="c118ee43-2afe-05fb-752a-0d5fe39cb263" testName="GoalExtraction.UnitTests.ArchitectureTests.ApplicationProject_ShouldOnlyReferenceDomain_AndNeverInfrastructureOrApi" computerName="fedora" duration="00:00:00.0003407" startTime="2026-09-19T17:40:23.7941902+03:00" endTime="2026-09-19T17:40:23.7941914+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81a613ed-7951-434e-b06a-0b10839266eb" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.DomainProject_ShouldHaveNoExternalDependenciesOrProjectReferences" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="d71616d7-3920-d187-c0ed-35c90699d8b5">
+      <Execution id="926fbcbf-a326-48a4-a309-4995c06f708a" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="DomainProject_ShouldHaveNoExternalDependenciesOrProjectReferences" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.IReadOnlyGoalQueryRepository_ShouldHaveZeroMutatingMethods_AdheringToIsp" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="a9117d23-db00-8e55-78a3-912d7f5033b8">
+      <Execution id="f94b3d6f-ed69-45d1-b778-77eb26b7ec9e" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="IReadOnlyGoalQueryRepository_ShouldHaveZeroMutatingMethods_AdheringToIsp" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.IGoalBatchWriteRepository_ShouldOnlyHaveBatchWriteMethods_AdheringToIsp" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="2de9b0d9-0783-7806-0d72-cb082c4a5108">
+      <Execution id="783c4719-c89d-4a9e-8f83-98c7491ff1c7" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="IGoalBatchWriteRepository_ShouldOnlyHaveBatchWriteMethods_AdheringToIsp" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.ApplicationProject_ShouldOnlyReferenceDomain_AndNeverInfrastructureOrApi" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="c118ee43-2afe-05fb-752a-0d5fe39cb263">
+      <Execution id="81a613ed-7951-434e-b06a-0b10839266eb" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="ApplicationProject_ShouldOnlyReferenceDomain_AndNeverInfrastructureOrApi" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.DomainAssembly_ShouldNotReferenceApplicationInfrastructureOrApi" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="c535e8d0-9d79-89cb-bfd4-a742fe10b587">
+      <Execution id="e1992f02-c6ec-4fa7-91ad-22d68fc435b5" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="DomainAssembly_ShouldNotReferenceApplicationInfrastructureOrApi" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.SanityUnitTests.Architecture_ShouldBeConfiguredCorrectly" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="80d65696-8700-73e9-5680-80d9f70d2424">
+      <Execution id="fe2517c3-d6a5-4908-85aa-0c0746e2b7c6" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.SanityUnitTests" name="Architecture_ShouldBeConfiguredCorrectly" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.ApplicationAssembly_ShouldNotReferenceInfrastructureOrApi" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="ce2a4053-3f6e-9066-3a17-3be8b03c4acc">
+      <Execution id="90861db1-2d11-4b97-8c0e-a190bb17f87e" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="ApplicationAssembly_ShouldNotReferenceInfrastructureOrApi" />
+    </UnitTest>
+    <UnitTest name="GoalExtraction.UnitTests.ArchitectureTests.InfrastructureProject_ShouldNotReferenceApi" storage="/home/vlads4r4/dev/side-projects/agentic__transcribe_goal_todolist/implementation/backend/tests/goalextraction.unittests/bin/release/net8.0/goalextraction.unittests.dll" id="af34ae98-c28d-45ad-b61d-175effc18e0c">
+      <Execution id="81c20c38-4da3-453e-ac7d-5e5fab9532c3" />
+      <TestMethod codeBase="/home/vlads4r4/dev/side-projects/Agentic__Transcribe_Goal_Todolist/implementation/backend/tests/GoalExtraction.UnitTests/bin/Release/net8.0/GoalExtraction.UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="GoalExtraction.UnitTests.ArchitectureTests" name="InfrastructureProject_ShouldNotReferenceApi" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d71616d7-3920-d187-c0ed-35c90699d8b5" executionId="926fbcbf-a326-48a4-a309-4995c06f708a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2de9b0d9-0783-7806-0d72-cb082c4a5108" executionId="783c4719-c89d-4a9e-8f83-98c7491ff1c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9117d23-db00-8e55-78a3-912d7f5033b8" executionId="f94b3d6f-ed69-45d1-b778-77eb26b7ec9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af34ae98-c28d-45ad-b61d-175effc18e0c" executionId="81c20c38-4da3-453e-ac7d-5e5fab9532c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c535e8d0-9d79-89cb-bfd4-a742fe10b587" executionId="e1992f02-c6ec-4fa7-91ad-22d68fc435b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce2a4053-3f6e-9066-3a17-3be8b03c4acc" executionId="90861db1-2d11-4b97-8c0e-a190bb17f87e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80d65696-8700-73e9-5680-80d9f70d2424" executionId="fe2517c3-d6a5-4908-85aa-0c0746e2b7c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c118ee43-2afe-05fb-752a-0d5fe39cb263" executionId="81a613ed-7951-434e-b06a-0b10839266eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.4.5+1caef2f33e (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.22]   Discovering: GoalExtraction.UnitTests
+[xUnit.net 00:00:00.24]   Discovered:  GoalExtraction.UnitTests
+[xUnit.net 00:00:00.24]   Starting:    GoalExtraction.UnitTests
+[xUnit.net 00:00:00.28]   Finished:    GoalExtraction.UnitTests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

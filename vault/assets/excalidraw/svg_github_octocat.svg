@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="18" fill="#121722" stroke="#222F43" stroke-width="2"/>
+  <circle cx="50" cy="42" r="26" fill="#F8FAFC"/>
+  <path d="M50 52 C46 52 42 56 42 62 C42 68 44 72 50 72 C56 72 58 68 58 62 C58 56 54 52 50 52 Z" fill="#121722"/>
+  <circle cx="42" cy="38" r="4" fill="#121722"/>
+  <circle cx="58" cy="38" r="4" fill="#121722"/>
+  <path d="M44 48 C44 44 38 38 30 40" fill="none" stroke="#121722" stroke-width="2.5"/>
+  <path d="M56 48 C56 44 62 38 70 40" fill="none" stroke="#121722" stroke-width="2.5"/>
+  <rect x="24" y="76" width="52" height="12" rx="4" fill="#15803D"/>
+  <text x="50" y="86" font-family="sans-serif" font-size="9" fill="#F8FAFC" text-anchor="middle" font-weight="bold">lloyd1515 / agentic</text>
+</svg>

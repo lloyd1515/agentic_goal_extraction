@@ -39,3 +39,6 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Obsidian local workspace state
+vault/.obsidian/workspace*.json

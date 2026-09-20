@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="18" fill="#121722" stroke="#222F43" stroke-width="2"/>
+  <path d="M50 12 L82 24 C82 52 68 74 50 88 C32 74 18 52 18 24 Z" fill="#1E293B" stroke="#FB7185" stroke-width="2.5"/>
+  <rect x="28" y="48" width="44" height="20" rx="4" fill="#4C0519"/>
+  <text x="50" y="62" font-family="monospace" font-size="9" fill="#FB7185" text-anchor="middle" font-weight="bold">'; DROP TABLE</text>
+  <line x1="28" y1="48" x2="72" y2="68" stroke="#FB7185" stroke-width="3" stroke-linecap="round"/>
+  <line x1="72" y1="48" x2="28" y2="68" stroke="#FB7185" stroke-width="3" stroke-linecap="round"/>
+</svg>
